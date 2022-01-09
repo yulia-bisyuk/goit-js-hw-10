@@ -13,16 +13,18 @@ refs.input.addEventListener('input', debounce(onSearchInput, DEBOUNCE_DELAY));
 
 
 function onSearchInput(e) {
-    const name = e.target.value;
+    const name = e.target.value.trim();
 
-   fetchCountries(name).then(renderCountriesList);
+    fetchCountries(name)
+        .then(renderCountryMarkup)
+        .catch((error) => console.log(error));
    
     
 }
 
-function renderCountriesList(countries) {
-    const markup = countries.map((country) => `<li><svg>${country.flags.svg}</svg><span>${country.name}</span></li>`).join('');
-    console.log(markup);
+function renderCountryMarkup({name, capital, population, flags, languages}) {
+    const markup = `<li><svg>${flags.svg}</svg><span>${name.official}</span></li>`;
+ 
     refs.countryList.innerHTML = markup;
 }
 
