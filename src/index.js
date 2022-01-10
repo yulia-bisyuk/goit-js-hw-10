@@ -3,12 +3,11 @@ import Notiflix from 'notiflix';
 import { fetchCountries } from './fetchCountries';
 
 const debounce = require('lodash.debounce');
+const DEBOUNCE_DELAY = 300;
 const refs = {
     input: document.querySelector('input#search-box'),
     countryList: document.querySelector('.country-list'),
 }
-
-const DEBOUNCE_DELAY = 300;
 
 refs.countryList.style.paddingLeft = '10px';
 refs.countryList.style.marginTop = '0px';
@@ -33,7 +32,7 @@ function onSearchInput(e) {
                 
             } else if (response.length >= 2 && response.length <= 10) {
                 clearMarkup();
-                response.forEach(({ name, flags }) => renderCountryListMarkup(name.common, flags.svg))
+                response.forEach(({ name, flags }) => renderCountryListMarkup(name.official, flags.svg))
                 
             } else if (response.length > 10) {
                 clearMarkup();
@@ -49,11 +48,12 @@ function onSearchInput(e) {
 }
 
 function renderCountryMarkup(name, capital, population, flags, languages) {
+    
     const markupCard = `
     <div style="display: flex; align-items: center;">
     <img src="${flags.svg}" width='50' height='50'></img>
     <h1 style="font-size: 30px;
-    margin-left: 16px;">${name.common}</h1>
+    margin-left: 16px;">${name.official}</h1>
     </div>
     <div style="font-size: 20px;
     margin-bottom: 8px;">Capital: ${capital}</div>
