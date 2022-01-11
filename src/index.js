@@ -21,7 +21,6 @@ function onSearchInput(e) {
         clearMarkup();
         return;
     }
-
     fetchCountries(countryName)
         .then((response) => {
             if (response.length === 1) {
@@ -40,11 +39,12 @@ function onSearchInput(e) {
 
             } else {
                 clearMarkup();
-                Notiflix.Notify.failure('Oops, there is no country with that name')
             }
-
-            }).catch((error) => console.log(error));
-   
+        })
+        .catch((error) => {
+            Notiflix.Notify.failure('Oops, there is no country with that name');
+            console.log(error);
+        })
 }
 
 function renderCountryMarkup(name, capital, population, flags, languages) {
