@@ -15,36 +15,40 @@ refs.countryList.style.marginTop = '0px';
 refs.input.addEventListener('input', debounce(onSearchInput, DEBOUNCE_DELAY));
 
 
-function onSearchInput(e) {
+async function onSearchInput(e) {
     const countryName = e.target.value.trim();
     if (!countryName) {
         clearMarkup();
         return;
     }
-    fetchCountries(countryName)
-        .then((response) => {
-            if (response.length === 1) {
 
-                const { name, capital, population, flags, languages } = response[0];
+    try {
+        const data = await fetchCountries(countryName);
+        const countriesData = await handleCountriesData(data);
+    } catch(error) {
+        clearMarkup();
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+        console.log(error);
+        }
+}
+
+function handleCountriesData(data) {
+            if (data.length === 1) {
+                const { name, capital, population, flags, languages } = data[0];
                 clearMarkup();
                 renderCountryMarkup(name, capital, population, flags, languages);
                 
-            } else if (response.length >= 2 && response.length <= 10) {
+            } else if (data.length >= 2 && data.length <= 10) {
                 clearMarkup();
-                response.forEach(({ name, flags }) => renderCountryListMarkup(name.official, flags.svg))
+                data.forEach(({ name, flags }) => renderCountryListMarkup(name.official, flags.svg))
                 
-            } else if (response.length > 10) {
+            } else if (data.length > 10) {
                 clearMarkup();
                 Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
 
             } else {
                 clearMarkup();
             }
-        })
-        .catch((error) => {
-            Notiflix.Notify.failure('Oops, there is no country with that name');
-            console.log(error);
-        })
 }
 
 function renderCountryMarkup(name, capital, population, flags, languages) {
@@ -82,3 +86,36 @@ function renderCountryListMarkup(name, flags) {
 function clearMarkup() {
     refs.countryList.innerHTML = '';
 }
+// ======= fetch syntax =========
+// function onSearchInput(e) {
+// const countryName = e.target.value.trim();
+//     if (!countryName) {
+//         clearMarkup();
+//         return;
+//     }
+//     fetchCountries(countryName)
+//         .then((response) => {
+//             if (response.length === 1) {
+
+//                 const { name, capital, population, flags, languages } = response[0];
+//                 clearMarkup();
+//                 renderCountryMarkup(name, capital, population, flags, languages);
+                
+//             } else if (response.length >= 2 && response.length <= 10) {
+//                 clearMarkup();
+//                 response.forEach(({ name, flags }) => renderCountryListMarkup(name.official, flags.svg))
+                
+//             } else if (response.length > 10) {
+//                 clearMarkup();
+//                 Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
+
+//             } else {
+//                 clearMarkup();
+//             }
+//         })
+//         .catch((error) => {
+//             clearMarkup();
+//             Notiflix.Notify.failure('Oops, there is no country with that name');
+//             console.log(error);
+//         });
+//    };
